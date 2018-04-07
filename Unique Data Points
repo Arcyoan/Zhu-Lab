@@ -1,0 +1,8 @@
+## Not releveant
+install.packages("maptools")
+install.packages("tidyverse")
+install.packages("ggmap")
+
+LA <-read.csv("C:/Users/jli341/Downloads/Los Angeles_BSA_nir (1).csv")
+b <- unique(LA[c("Lon", "Lat")])
+write.csv(b, file = "LA_BSA_nir_datapoints.csv")
