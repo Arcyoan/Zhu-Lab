@@ -1,0 +1,25 @@
+## Install packages
+install.packages("sp")
+install.packages("maptools")
+install.packages("rgdal")
+install.packages("rgeos")
+library(maptools)
+library(rgeos)
+library(rgdal)
+## configure BSA
+La_BSA <- read.csv("C:/Users/jli341/Downloads/Los Angeles_BSA_nir.csv")
+crswgs84=CRS("+proj=gall +ellps=WGS84 +datum=WGS84 +no_defs")
+states <-readShapePoly("C:/Users/jli341/Downloads/CPA.shp",proj4string=crswgs84,verbose=TRUE)
+sodo <- states[states$SHAPE_AREA == "Los Angeles" & states$NAME_ALF"Communities"] ## doesnt work
+plot(states)
+b <- unique(La_BSA[c("Lon", "Lat")])
+state1 <- spTransform(states, CRS("+proj=gall +ellps=WGS84"))
+points(b$Lon,b$Lat, col="red")
+dat <- data.frame(Longitude = b$Lon, Latitude = b$Lat)
+coordinates(dat) <- ~ Longitude + Latitude
+proj4string(dat) <- proj4string(state1)
+proj4string(dat) <- CRS("+proj=gall")
+dat <- spTransform(dat, proj4string(states))
+over(dat,state1)
+over(state1,dat)
+?points
