@@ -1,25 +1,27 @@
-## Install packages
-install.packages("sp")
-install.packages("maptools")
-install.packages("rgdal")
-install.packages("rgeos")
-library(maptools)
-library(rgeos)
-library(rgdal)
-## configure BSA
-La_BSA <- read.csv("C:/Users/jli341/Downloads/Los Angeles_BSA_nir.csv")
-crswgs84=CRS("+proj=gall +ellps=WGS84 +datum=WGS84 +no_defs")
-states <-readShapePoly("C:/Users/jli341/Downloads/CPA.shp",proj4string=crswgs84,verbose=TRUE)
-sodo <- states[states$SHAPE_AREA == "Los Angeles" & states$NAME_ALF"Communities"] ## doesnt work
-plot(states)
-b <- unique(La_BSA[c("Lon", "Lat")])
-state1 <- spTransform(states, CRS("+proj=gall +ellps=WGS84"))
-points(b$Lon,b$Lat, col="red")
-dat <- data.frame(Longitude = b$Lon, Latitude = b$Lat)
-coordinates(dat) <- ~ Longitude + Latitude
-proj4string(dat) <- proj4string(state1)
+## opens packages
+library("sp")
+library("maptools")
+library("rgdal")
+library("rgeos")
+
+La_BSA <- read.csv("C:/Users/xbear/Desktop/Zhu Lab/Data/Los Angeles/Albedo Data/Google Drive Copy/Los Angeles_BSA_nir.csv")
+crswgs84=CRS("+proj=gall +ellps=WGS84 +datum=WGS84 +no_defs") ## Projection original longlat
+LA <- readShapePoly("C:/Users/xbear/Desktop/Zhu Lab/Data/Los Angeles/GIS Data/Gall Projected GIS/Gis_Gall.shp",proj4string=crswgs84,verbose=TRUE)## Reads shape file
+LA_1 <- LA$NAME_ALF ## Tried to seperate out the shape area and the names
+plot(LA)
+list(LA_1)
+Coord_Uni <- unique(La_BSA[c("Lon", "Lat")]) ## Give only unique set of coordinates
+dat <- data.frame(Longitude = Coord_Uni$Lon, Latitude = Coord_Uni$Lat)
+coordinates(dat) <- ~ Longitude + Latitude ## Makes sure the coordinates are in Lat and long
 proj4string(dat) <- CRS("+proj=gall")
-dat <- spTransform(dat, proj4string(states))
-over(dat,state1)
-over(state1,dat)
+proj4string(LA_1) <- CRS("+proj=gall") ## Not relevent
+proj4string(dat) <- proj4string(LA)
+points(Coord_Uni$Lon,Coord_Uni$Lat, col = "red")
+dat <- spTransform(dat, proj4string(LA)) ## Makes sure its the same coordinate system
+over(dat,LA) ## overlays the unique lat long over the shape file, this should label the communities
+over(LA,dat)
 ?points
+?rgeos
+proj4string(dat)
+proj4string(LA)
+?CRS
