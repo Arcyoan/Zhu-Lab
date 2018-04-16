@@ -1,0 +1,34 @@
+## opens packages
+library("sp")
+library("maptools")
+library("rgdal")
+library("rgeos")
+
+La <- read.csv("C:/Users/xbear/Desktop/Zhu Lab/Data/Los Angeles/Albedo Data/Google Drive Copy/Los Angeles_BSA_sho.csv")
+crswgs84=CRS("+proj=gall +ellps=WGS84 +datum=WGS84 +no_defs") ## Projection original longlat
+LA <- readShapePoly("C:/Users/xbear/Desktop/Zhu Lab/Data/Los Angeles/GIS Data/Gall Projected GIS/Gis_Gall.shp",proj4string=crswgs84,verbose=TRUE)## Reads shape file
+dat <- data.frame(Longitude = La$Lon, Latitude = La$Lat)
+coordinates(dat) <- ~ Longitude + Latitude ## Makes sure the coordinates are in Lat and long
+proj4string(dat) <- CRS("+proj=gall")
+proj4string(dat) <- proj4string(LA)
+options(max.print = 1000000000)
+merge_csv_sho_shape <- over(dat,LA) ## overlays the unique lat long over the shape file, this should label the communities
+write.csv(merge_csv_sho_shape, file = "LA_BSA_sho_Communities.csv")
+
+
+
+
+points(La$Lon,La$Lat, col = "red")
+Coord_Uni <- unique(La_BSA[c("Lon", "Lat")]) ## Give only unique set of coordinates
+plot(LA)
+list(LA_1)
+LA_1 <- LA$NAME_ALF ## Tried to seperate out the shape area and the names
+points(Coord_Uni$Lon,Coord_Uni$Lat, col = "red")
+?points
+?rgeos
+?CRS
+?SpatialGridDataFrame
+?read
+?spTransform
+?options
+?unique
